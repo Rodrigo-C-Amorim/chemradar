@@ -23,10 +23,11 @@ _CHEM_ENG_FILTER = (
 _semaphore = asyncio.Semaphore(6)
 
 
-def _build_arxiv_query(query: str) -> str:
+def _build_arxiv_query(query: str, with_filter: bool = False) -> str:
     """
     Converte 'termo1 OR termo2 frase OR termo3' em query arXiv válida.
     Termos com espaço são envolvidos em aspas: all:"multi word term"
+    with_filter=True adiciona filtro de eng. química (usado só no scoring de contagem).
     """
     if " OR " in query:
         parts = []
@@ -40,8 +41,9 @@ def _build_arxiv_query(query: str) -> str:
         base = f'ti:"{query}"'
     else:
         base = f"ti:{query}"
-    # Restringe ao domínio de engenharia química
-    return f"{base} {_CHEM_ENG_FILTER}"
+    if with_filter:
+        return f"{base} {_CHEM_ENG_FILTER}"
+    return base
 
 
 async def get_arxiv_data(query: str) -> dict:
@@ -101,7 +103,7 @@ async def get_arxiv_data(query: str) -> dict:
 
 async def _get_arxiv_count(query: str) -> int:
     """Busca apenas o totalResults (max_results=0) — muito mais rápido que buscar artigos."""
-    built_query = _build_arxiv_query(query)
+    built_query = _build_arxiv_query(query, with_filter=True)
     params = {"search_query": built_query, "max_results": 0}
     async with _semaphore:
         try:

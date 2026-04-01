@@ -151,8 +151,7 @@ async def get_niche_news(niche_id: str):
         return _get_cache(cache_key)
 
     niche = NICHES[niche_id]
-    # official_only=False: busca mais ampla para o detalhe (queries específicas já filtram o tema)
-    data = await get_news_data(niche["keywords_news"], official_only=False)
+    data = await get_news_data(niche["keywords_news"], niche["keywords_arxiv"], official_only=False)
     _set_cache(cache_key, data)
     return data
 

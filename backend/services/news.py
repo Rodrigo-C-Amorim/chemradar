@@ -27,19 +27,22 @@ def _simplify_query(query: str) -> str:
     return " OR ".join(terms[:3])
 
 
-async def get_news_data(query: str, official_only: bool = True) -> dict:
+async def get_news_data(query_pt: str, query_en: str = "", official_only: bool = True) -> dict:
     """
     Busca notícias via NewsAPI.
-    Estratégia: tenta PT simplificado → PT com query original → EN simplificado.
+    Estratégia: PT simplificado → EN (keywords em inglês) → EN com primeiro termo PT.
+    query_pt: keywords em português (ex: "siderurgia OR metalurgia")
+    query_en: keywords em inglês (ex: "steelmaking OR metallurgy") — usa se PT retornar 0
     """
     if not NEWS_API_KEY or NEWS_API_KEY == "sua_chave_aqui":
         return {"articles": [], "total": 0, "warning": "Configure NEWS_API_KEY no .env"}
 
     from_date = (datetime.today() - timedelta(days=60)).strftime("%Y-%m-%d")
-    simple_query = _simplify_query(query)
+    simple_pt = _simplify_query(query_pt)
+    simple_en = _simplify_query(query_en) if query_en else ""
 
     def _build_params(q: str, lang: str) -> dict:
-        p = {
+        return {
             "q": q,
             "apiKey": NEWS_API_KEY,
             "language": lang,
@@ -47,7 +50,6 @@ async def get_news_data(query: str, official_only: bool = True) -> dict:
             "pageSize": 10,
             "from": from_date,
         }
-        return p
 
     def _parse_articles(data: dict) -> list:
         return [
@@ -62,15 +64,15 @@ async def get_news_data(query: str, official_only: bool = True) -> dict:
             if a.get("title") and "[Removed]" not in a.get("title", "")
         ]
 
-    # Ordem de tentativas: PT simples → EN simples → EN original
-    attempts = [
-        ("pt", simple_query),
-        ("en", simple_query),
-        ("en", query),
-    ]
+    # PT primeiro; depois EN com keywords em inglês (reais)
+    attempts = [("pt", simple_pt)]
+    if simple_en:
+        attempts.append(("en", simple_en))
 
     async with _semaphore:
         for lang, q in attempts:
+            if not q:
+                continue
             try:
                 async with httpx.AsyncClient(timeout=12.0) as client:
                     response = await client.get(NEWS_BASE_URL, params=_build_params(q, lang))
@@ -86,9 +88,9 @@ async def get_news_data(query: str, official_only: bool = True) -> dict:
     return {"articles": [], "total": 0}
 
 
-async def get_news_score(query: str) -> float:
+async def get_news_score(query_pt: str, query_en: str = "") -> float:
     """Score log-normalizado: 5k artigos=100, 500=73, 50=46."""
-    result = await get_news_data(query, official_only=False)
+    result = await get_news_data(query_pt, query_en, official_only=False)
     total = result.get("total", 0)
     if total == 0:
         return 0.0

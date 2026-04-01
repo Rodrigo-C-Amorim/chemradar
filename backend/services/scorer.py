@@ -11,7 +11,7 @@ WEIGHTS = {"trends": 0.60, "news": 0.25, "arxiv": 0.15}
 async def _score_niche(niche_id: str, niche: dict, timeframe: str = "today 3-m") -> dict:
     trends_score, news_score, arxiv_score = await asyncio.gather(
         get_trend_score(niche["keywords_trends"], timeframe),
-        get_news_score(niche["keywords_news"]),
+        get_news_score(niche["keywords_news"], niche["keywords_arxiv"]),
         get_arxiv_score(niche["keywords_arxiv"]),
     )
 
