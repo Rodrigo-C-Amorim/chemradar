@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-brand-navy text-slate-100 font-sans antialiased;
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #071A40; }
+  ::-webkit-scrollbar-thumb { background: #1A4A8C; border-radius: 9999px; }
+}
+
+@layer components {
+  .card {
+    @apply bg-brand-card border border-brand-border rounded-2xl p-5;
+  }
+
+  .card-light {
+    @apply bg-brand-card-light border border-brand-border rounded-2xl p-5;
+  }
+
+  /* Botão principal — azul sólido */
+  .btn-primary {
+    @apply bg-brand-blue hover:bg-sky-400 text-white font-bold uppercase tracking-wide px-5 py-2.5 rounded-xl transition-colors duration-200 text-sm;
+  }
+
+  /* Botão outline branco — estilo Propeq */
+  .btn-outline {
+    @apply border-2 border-white text-white font-bold uppercase tracking-wide px-5 py-2 rounded-full hover:bg-white hover:text-brand-navy transition-all duration-200 text-sm;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wide;
+  }
+
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+
+  /* Linha decorativa estilo Propeq */
+  .section-title {
+    @apply text-lg font-extrabold uppercase tracking-wider text-white;
+  }
+  .section-title::after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 3px;
+    background: #2B8FD4;
+    margin-top: 6px;
+    border-radius: 2px;
+  }
+}
+
+/* Hero gradient — inspirado no azul Propeq */
+.hero-gradient {
+  background: linear-gradient(135deg, #04122E 0%, #0B2E72 50%, #0D3A8A 100%);
+}
+
+/* Animação de entrada */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up {
+  animation: fadeUp 0.35s ease-out forwards;
+  opacity: 0;
+}
+
+/* Pulse suave para indicadores live */
+@keyframes softPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+.live-dot {
+  animation: softPulse 2s ease-in-out infinite;
+}
