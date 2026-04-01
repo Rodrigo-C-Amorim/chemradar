@@ -18,6 +18,7 @@ export const getNicheTrends = (id, timeframe = "today 12-m") =>
 export const compareNiches = (ids) =>
   api.get("/compare", { params: { niches: ids.join(",") } }).then((r) => r.data);
 export const getNicheNews = (id) => api.get(`/news/${id}`).then((r) => r.data);
+export const getGeneralNews = () => api.get("/news/geral").then((r) => r.data);
 export const getNichePapers = (id) => api.get(`/papers/${id}`).then((r) => r.data);
 export const subscribe = (email) => api.post("/subscribe", { email }).then((r) => r.data);
 

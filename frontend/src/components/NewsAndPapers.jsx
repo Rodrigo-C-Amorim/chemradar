@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import { getNicheNews, getNichePapers } from "../api/client";
+import { getNicheNews, getGeneralNews } from "../api/client";
+
+const GERAL = { id: "geral", name: "Geral", emoji: "🌐", color: "#2B8FD4" };
 
 function NichePills({ niches, selectedId, onSelect }) {
   return (
@@ -68,19 +70,16 @@ function PaperCard({ paper }) {
 }
 
 export function NewsFeed({ niches }) {
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState(GERAL);
   const [news, setNews] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (niches.length > 0 && !selected) setSelected(niches[0]);
-  }, [niches]);
 
   useEffect(() => {
     if (!selected) return;
     setNews(null);
     setLoading(true);
-    getNicheNews(selected.id)
+    const fetch = selected.id === "geral" ? getGeneralNews() : getNicheNews(selected.id);
+    fetch
       .then(setNews)
       .catch(() => setNews({ articles: [] }))
       .finally(() => setLoading(false));
@@ -103,7 +102,7 @@ export function NewsFeed({ niches }) {
         )}
       </div>
 
-      <NichePills niches={niches} selectedId={selected?.id} onSelect={setSelected} />
+      <NichePills niches={[GERAL, ...niches]} selectedId={selected?.id} onSelect={setSelected} />
 
       <div className="space-y-2 min-h-[120px]">
         {loading ? (

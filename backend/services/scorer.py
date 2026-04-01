@@ -2,23 +2,20 @@ import asyncio
 from config.niches import NICHES
 from services.trends import get_trend_score
 from services.news import get_news_score
-from services.arxiv import get_arxiv_score
 
 
-WEIGHTS = {"trends": 0.60, "news": 0.25, "arxiv": 0.15}
+WEIGHTS = {"trends": 0.70, "news": 0.30}
 
 
 async def _score_niche(niche_id: str, niche: dict, timeframe: str = "today 3-m") -> dict:
-    trends_score, news_score, arxiv_score = await asyncio.gather(
+    trends_score, news_score = await asyncio.gather(
         get_trend_score(niche["keywords_trends"], timeframe),
         get_news_score(niche["keywords_news"], niche["keywords_arxiv"]),
-        get_arxiv_score(niche["keywords_arxiv"]),
     )
 
     final_score = (
         trends_score * WEIGHTS["trends"]
         + news_score * WEIGHTS["news"]
-        + arxiv_score * WEIGHTS["arxiv"]
     )
 
     return {
@@ -32,7 +29,6 @@ async def _score_niche(niche_id: str, niche: dict, timeframe: str = "today 3-m")
         "scores_breakdown": {
             "trends": round(trends_score, 1),
             "news": round(news_score, 1),
-            "arxiv": round(arxiv_score, 1),
         },
     }
 

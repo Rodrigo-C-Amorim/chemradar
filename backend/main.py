@@ -140,6 +140,22 @@ async def compare_niches(niches: str = Query(..., description="IDs separados por
     return results
 
 
+@app.get("/api/news/geral")
+async def get_general_news():
+    """Notícias gerais do setor químico e industrial."""
+    cache_key = "news_geral"
+    if _is_cache_valid(cache_key):
+        return _get_cache(cache_key)
+
+    data = await get_news_data(
+        "indústria química OR engenharia química OR setor industrial OR processos químicos",
+        "chemical industry OR chemical engineering OR industrial processes OR petrochemical",
+        official_only=False,
+    )
+    _set_cache(cache_key, data)
+    return data
+
+
 @app.get("/api/news/{niche_id}")
 async def get_niche_news(niche_id: str):
     """Notícias recentes sobre um nicho."""

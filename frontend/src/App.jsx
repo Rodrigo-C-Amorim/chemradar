@@ -3,7 +3,7 @@ import Navbar from "./components/Navbar";
 import RankingTable from "./components/RankingTable";
 import ComparisonChart from "./components/ComparisonChart";
 import EmailSubscribe from "./components/EmailSubscribe";
-import { NewsFeed, PapersFeed } from "./components/NewsAndPapers";
+import { NewsFeed } from "./components/NewsAndPapers";
 import { getRanking } from "./api/client";
 import { TIMEFRAMES } from "./components/TrendChart";
 
@@ -146,7 +146,7 @@ export default function App() {
             <h2 className="section-title">Ranking de Nichos</h2>
             <div className="flex items-center gap-3 flex-wrap">
               <p className="text-xs text-slate-500 font-medium hidden sm:block">
-                Tendências 60% · Notícias 25% · Artigos 15%
+                Tendências 70% · Notícias 30%
               </p>
               {/* Seletor de período */}
               <div className="flex gap-1 rounded-xl border border-brand-border p-1">
@@ -193,14 +193,6 @@ export default function App() {
           <section id="noticias" className="mb-10">
             <h2 className="section-title mb-4">Notícias</h2>
             <NewsFeed niches={ranking} />
-          </section>
-        )}
-
-        {/* Artigos Científicos */}
-        {!loading && ranking.length > 0 && (
-          <section id="artigos" className="mb-10">
-            <h2 className="section-title mb-4">Artigos Científicos</h2>
-            <PapersFeed niches={ranking} />
           </section>
         )}
 

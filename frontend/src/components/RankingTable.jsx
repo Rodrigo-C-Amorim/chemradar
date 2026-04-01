@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import TrendChart from "./TrendChart";
-import { getNicheNews, getNichePapers } from "../api/client";
+import { getNicheNews } from "../api/client";
 
 function heatColor(score) {
   if (score >= 70) return "#10B981";
@@ -16,8 +16,8 @@ function heatLabel(score) {
   return "↘ FRIO";
 }
 
-const WEIGHTS = { trends: 0.60, news: 0.25, arxiv: 0.15 };
-const WEIGHT_PCT = { trends: "60%", news: "25%", arxiv: "15%" };
+const WEIGHTS = { trends: 0.70, news: 0.30 };
+const WEIGHT_PCT = { trends: "70%", news: "30%" };
 
 function MiniBar({ value, color, label }) {
   return (
@@ -40,7 +40,6 @@ function ScoreReason({ breakdown, finalScore }) {
   const items = [
     { key: "trends", label: "Tendência", icon: "📈", color: "#2B8FD4", value: trends },
     { key: "news",   label: "Notícias",  icon: "📰", color: "#8B5CF6", value: news  },
-    { key: "arxiv",  label: "Artigos",   icon: "🔬", color: "#10B981", value: arxiv },
   ];
   const dominant = [...items].sort(
     (a, b) => b.value * WEIGHTS[b.key] - a.value * WEIGHTS[a.key]
@@ -108,20 +107,15 @@ function PaperItem({ paper }) {
 function NicheDetail({ niche, timeframe }) {
   const [tab, setTab] = useState("trend");
   const [news, setNews] = useState(null);
-  const [papers, setPapers] = useState(null);
 
-  // Carrega notícias/artigos somente quando a aba correspondente é aberta
   useEffect(() => {
     if (tab === "news" && !news)
       getNicheNews(niche.id).then(setNews).catch(() => setNews({ articles: [] }));
-    if (tab === "papers" && !papers)
-      getNichePapers(niche.id).then(setPapers).catch(() => setPapers({ papers: [] }));
   }, [tab, niche.id]);
 
   const tabs = [
-    { id: "trend",  label: "📈 Tendência" },
-    { id: "news",   label: "📰 Notícias"  },
-    { id: "papers", label: "🔬 Artigos"   },
+    { id: "trend", label: "📈 Tendência" },
+    { id: "news",  label: "📰 Notícias"  },
   ];
 
   return (
@@ -153,22 +147,6 @@ function NicheDetail({ niche, timeframe }) {
         </div>
       )}
 
-      {tab === "papers" && (
-        <div className="space-y-2">
-          {!papers ? (
-            <p className="text-xs text-slate-500">Carregando artigos...</p>
-          ) : !papers.papers?.length ? (
-            <p className="text-xs text-slate-500">Nenhum artigo encontrado no arXiv.</p>
-          ) : (
-            papers.papers.map((p, i) => <PaperItem key={i} paper={p} />)
-          )}
-          {papers?.total > 0 && (
-            <p className="text-[10px] text-slate-600 pt-1">
-              {papers.total.toLocaleString("pt-BR")} publicações encontradas no arXiv.
-            </p>
-          )}
-        </div>
-      )}
     </div>
   );
 }
@@ -223,10 +201,9 @@ export default function RankingTable({ data, loading, refreshing, timeframe }) {
                   <span className="font-extrabold text-white text-sm uppercase tracking-wide">{niche.emoji} {niche.name}</span>
                   <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-brand-navy text-slate-500 border border-brand-border">{niche.category}</span>
                 </div>
-                <div className="grid grid-cols-3 gap-x-4">
+                <div className="grid grid-cols-2 gap-x-4">
                   <MiniBar value={niche.scores_breakdown?.trends ?? 0} color="#2B8FD4" label="Tendência" />
                   <MiniBar value={niche.scores_breakdown?.news ?? 0}   color="#8B5CF6" label="Notícias" />
-                  <MiniBar value={niche.scores_breakdown?.arxiv ?? 0}  color="#10B981" label="Artigos" />
                 </div>
               </div>
               <div className="text-right shrink-0 ml-2 min-w-[56px]">

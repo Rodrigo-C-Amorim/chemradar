@@ -41,7 +41,6 @@ export default function Navbar({ lastUpdated, onRefresh, loading }) {
             <nav className="hidden items-center gap-5 text-xs font-bold uppercase tracking-wider text-slate-400 sm:flex">
               <a href="#ranking"  className="hover:text-brand-blue transition-colors">Ranking</a>
               <a href="#noticias" className="hover:text-brand-blue transition-colors">Notícias</a>
-              <a href="#artigos"  className="hover:text-brand-blue transition-colors">Artigos</a>
               <a href="#comparar" className="hover:text-brand-blue transition-colors">Comparar</a>
               <a href="#alertas"  className="btn-outline text-xs py-1.5 px-4">Alertas</a>
             </nav>
