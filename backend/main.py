@@ -2,12 +2,11 @@ import asyncio
 import os
 from contextlib import asynccontextmanager
 from datetime import datetime
-from typing import Optional
-
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, EmailStr  # EmailStr requer email-validator instalado
+from pydantic import BaseModel
+from pydantic import EmailStr
 
 load_dotenv()
 
