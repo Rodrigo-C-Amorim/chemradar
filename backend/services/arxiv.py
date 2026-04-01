@@ -10,15 +10,13 @@ ARXIV_NS = {
     "opensearch": "http://a9.com/-/spec/opensearch/1.1/",
 }
 
-# Filtro restritivo: exige presença de termos de engenharia química/processos
-# Usa cat: para categorias arXiv de física química + materiais + engenharia
+# Filtro de engenharia química — usa apenas all: para não bloquear papers válidos
 _CHEM_ENG_FILTER = (
-    'AND (cat:physics.chem-ph OR cat:cond-mat.mtrl-sci OR cat:cond-mat.soft'
-    ' OR all:"chemical engineering" OR all:"process engineering"'
+    'AND (all:"chemical engineering" OR all:"process engineering"'
     ' OR all:"chemical process" OR all:reactor OR all:catalysis'
     ' OR all:distillation OR all:"heat exchanger" OR all:"mass transfer"'
     ' OR all:bioprocess OR all:fermentation OR all:polymer OR all:petroleum'
-    ' OR all:"unit operation")'
+    ' OR all:"unit operation" OR all:thermodynamics OR all:"reaction engineering")'
 )
 
 # Máximo 6 requisições simultâneas ao arXiv

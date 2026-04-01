@@ -62,10 +62,11 @@ async def get_news_data(query: str, official_only: bool = True) -> dict:
             if a.get("title") and "[Removed]" not in a.get("title", "")
         ]
 
-    # Ordem de tentativas: PT simples → EN simples
+    # Ordem de tentativas: PT simples → EN simples → EN original
     attempts = [
         ("pt", simple_query),
         ("en", simple_query),
+        ("en", query),
     ]
 
     async with _semaphore:
